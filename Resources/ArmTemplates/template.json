@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "cosmosDbName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of Cosmos DB to create"
+        }
+      },
+      "cosmosIpWhitelist": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Any additional IP addresses to add to the Cosmos DB IP Range Filter in addition to the default addresses.  If more than 1 address is included they should be seperated by a comma, eg: 11.111.123.134,12.134.114.115"
+        }
+      }
+    },
+    "variables": {
+      "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/"
+    },
+    "resources": [
+      {
+        "name": "appSharedCosmos",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2017-05-10",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[concat(variables('deploymentUrlBase'),'cosmos-db.json')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "cosmosDbName": {
+              "value": "[parameters('cosmosDbName')]"
+            },
+            "cosmosApiType": {
+              "value": "SQL"
+            },
+            "defaultConsistencyLevel": {
+              "value": "Strong"
+            },
+            "additionalIpAddresses": {
+              "value": "[parameters('cosmosIpWhitelist')]"
+            }
+          }
+        }
+      }
+    ]
+  }

@@ -1,0 +1,26 @@
+variables:
+    ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates' 
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    ref: refs/tags/v1.3.0
+    endpoint: 'GitHub (ESFA)'
+
+jobs:
+
+- job: BuildDotNetStandard
+  displayName: Build-DotNetStandard
+  pool:
+    name: Continuous Integration 02 - SSD - 160ACU
+    demands:
+    - msbuild
+    - visualstudio
+
+  steps:
+  - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+    parameters:
+      ArmTemplateRoot: $(ArmTemplateRoot)
