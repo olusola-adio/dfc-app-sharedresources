@@ -38,7 +38,7 @@
         "appServicePlanName": "[concat(variables('ResourcePrefix'), '-asp')]",
         "cosmosDbName": "[concat(variables('ResourcePrefix'), '-cdb')]",
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-        "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-shared'))]",
+        "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-sharedresources'))]",
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
         "servicebusSku": "[if(or(equals(parameters('environment'), 'PP'), equals(parameters('Environment'), 'PRD')), 'Premium', 'Standard')]",
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]"
