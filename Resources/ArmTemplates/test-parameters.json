@@ -13,6 +13,12 @@
         },
         "environment": {
             "value": "FOO"
+        },
+        "jobprofileDatabaseNeedsCreation": {
+            "value": false
+        },
+        "jobprofileDatabaseOfferThroughput": {
+            "value": 400
         }
     }
 }

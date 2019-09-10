@@ -32,6 +32,12 @@
         },
         "environment": {
             "type": "string"
+        },
+        "jobprofileDatabaseNeedsCreation": {
+            "type": "bool"
+        },
+        "jobprofileDatabaseOfferThroughput": {
+            "type": "int"
         }
     },
     "variables": {
@@ -77,7 +83,7 @@
             }
         },
         {
-            "name": "appSharedCosmos",
+            "name": "appSharedCosmosAccount",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "properties": {
@@ -98,6 +104,38 @@
                     },
                     "additionalIpAddresses": {
                         "value": "[parameters('cosmosIpWhitelist')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "appSharedCosmosDatabase",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "appSharedCosmosAccount"
+            ],
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'CosmosDb/cosmos-database.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "accountName": {
+                        "value": "[variables('cosmosDbName')]"
+                    },
+                    "databaseName": {
+                        "value": "dfc-app-jobprofiles"
+                    },
+                    "useSharedRequestUnits": {
+                        "value": true
+                    },
+                    "offerThroughput": {
+                        "value": "[parameters('jobprofileDatabaseOfferThroughput')]"
+                    },
+                    "databaseNeedsCreation": {
+                        "value": "[parameters('jobprofileDatabaseNeedsCreation')]"
                     }
                 }
             }

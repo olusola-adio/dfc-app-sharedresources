@@ -13,6 +13,12 @@
         },
         "environment": {
             "value": "__ReleaseEnvironmentName__"
+        },
+        "jobprofileDatabaseNeedsCreation": {
+            "value": __CosmosDbDatabaseExists__
+        },
+        "jobprofileDatabaseOfferThroughput": {
+            "value": "__JobprofileDatabaseOfferThroughput__"
         }
     }
 }
