@@ -23,6 +23,9 @@
         "aspTier": {
             "type": "string"
         },
+        "cosmosDbName": {
+            "type": "string"
+        },
         "cosmosIpWhitelist": {
             "type": "string",
             "defaultValue": "",
@@ -42,7 +45,6 @@
     },
     "variables": {
         "appServicePlanName": "[concat(variables('ResourcePrefix'), '-asp')]",
-        "cosmosDbName": "[concat(variables('ResourcePrefix'), '-cdb')]",
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-sharedresources'))]",
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
@@ -94,7 +96,7 @@
                 },
                 "parameters": {
                     "cosmosDbName": {
-                        "value": "[variables('cosmosDbName')]"
+                        "value": "[parameters('cosmosDbName')]"
                     },
                     "cosmosApiType": {
                         "value": "SQL"
@@ -123,7 +125,7 @@
                 },
                 "parameters": {
                     "accountName": {
-                        "value": "[variables('cosmosDbName')]"
+                        "value": "[parameters('cosmosDbName')]"
                     },
                     "databaseName": {
                         "value": "dfc-app-jobprofiles"

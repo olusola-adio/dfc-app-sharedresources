@@ -11,6 +11,9 @@
         "aspTier": {
             "value": "Standard"
         },
+        "cosmosDbName": {
+            "value": "dfc-dev-app-sharedresources-cdb"
+        },
         "environment": {
             "value": "FOO"
         },

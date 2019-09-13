@@ -11,14 +11,17 @@
         "aspTier": {
             "value": "__AspTier__"
         },
+        "cosmosDbName": {
+            "value": "__cosmosDbName__"
+        },
         "environment": {
             "value": "__ReleaseEnvironmentName__"
         },
         "jobprofileDatabaseNeedsCreation": {
-            "value": __CosmosDbDatabaseExists__
+            "value": __CosmosDbDatabaseDoesntExist__
         },
         "jobprofileDatabaseOfferThroughput": {
-            "value": "__JobprofileDatabaseOfferThroughput__"
+            "value": __JobprofileDatabaseOfferThroughput__
         }
     }
 }
