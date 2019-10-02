@@ -2,6 +2,15 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "aseHostingEnvironmentName": {
+            "value": "__AseServiceName__"
+        },
+        "aseOutboundIpAddress": {
+            "value": "__AseOutboundIpAddress__"
+        },
+        "aseResourceGroup": {
+            "value": "__sharedResourceGroup__"
+        },
         "aspInstances": {
             "value": __AspInstances__
         },
@@ -12,7 +21,7 @@
             "value": "__AspTier__"
         },
         "cosmosDbName": {
-            "value": "__cosmosDbName__"
+            "value": "__appSharedCosmosDBName__"
         },
         "environment": {
             "value": "__ReleaseEnvironmentName__"
