@@ -43,7 +43,8 @@
         "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-sharedresources'))]",
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
         "servicebusSku": "[if(or(equals(parameters('environment'), 'PP'), equals(parameters('Environment'), 'PRD')), 'Premium', 'Standard')]",
-        "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]"
+        "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
+        "cmsTopicName": "cms-messages"
     },
     "resources": [
         {
@@ -203,6 +204,26 @@
                 "parameters": {
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('cmsTopicName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'ServiceBus/servicebus-topic.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusNamespaceName": {
+                        "value": "[variables('serviceBusName')]"
+                    },
+                    "serviceBusTopicName": {
+                        "value": "[variables('cmsTopicName')]"
                     }
                 }
             }
