@@ -37,12 +37,13 @@
         }
     },
     "variables": {
+        "productionEnvironment": "[or(equals(parameters('environment'), 'PP'), equals(parameters('Environment'), 'PRD'))]",
         "appServicePlanName": "[concat(variables('ResourcePrefix'), '-asp')]",
         "allowedIpAddresses": "[createArray('104.42.195.92','40.76.54.131','52.176.6.30','52.169.50.45','52.187.184.26', parameters('aseOutboundIpAddress'))]",
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-sharedresources'))]",
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
-        "servicebusSku": "[if(or(equals(parameters('environment'), 'PP'), equals(parameters('Environment'), 'PRD')), 'Premium', 'Standard')]",
+        "servicebusSku": "[if(variables('productionEnvironment'), 'Premium', 'Standard')]",
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
         "cmsTopicName": "cms-messages"
     },
@@ -224,6 +225,37 @@
                     },
                     "serviceBusTopicName": {
                         "value": "[variables('cmsTopicName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('monitor-',variables('cmsTopicName'))]",
+            "type": "Microsoft.Resources/deployments",
+            "condition" : "[not(variables('productionEnvironment'))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'ServiceBus/servicebus-topic-authrule.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "authorizationRuleName": {
+                        "value": "[concat('monitor-',variables('cmsTopicName'))]"
+                    },
+                    "topicName": {
+                        "value": "[variables('cmsTopicName')]"
+                    },
+                    "rights": {
+                        "value": [
+                            "manage",
+                            "send",
+                            "listen"
+                        ]
+                    },
+                    "servicebusName": {
+                        "value": "[variables('serviceBusName')]"
                     }
                 }
             }
