@@ -45,7 +45,8 @@
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
         "servicebusSku": "[if(variables('productionEnvironment'), 'Premium', 'Standard')]",
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
-        "cmsTopicName": "cms-messages"
+        "cmsTopicName": "cms-messages",
+        "cmsTopicName-draft": "[concat(variables('cmsTopicName'),'-draft')]"
     },
     "resources": [
         {
@@ -231,6 +232,26 @@
         },
         {
             "apiVersion": "2017-05-10",
+            "name": "[variables('cmsTopicName-draft')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'ServiceBus/servicebus-topic.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusNamespaceName": {
+                        "value": "[variables('serviceBusName')]"
+                    },
+                    "serviceBusTopicName": {
+                        "value": "[variables('cmsTopicName-draft')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
             "name": "[concat('monitor-',variables('cmsTopicName'))]",
             "type": "Microsoft.Resources/deployments",
             "condition" : "[not(variables('productionEnvironment'))]",
@@ -246,6 +267,37 @@
                     },
                     "topicName": {
                         "value": "[variables('cmsTopicName')]"
+                    },
+                    "rights": {
+                        "value": [
+                            "manage",
+                            "send",
+                            "listen"
+                        ]
+                    },
+                    "servicebusName": {
+                        "value": "[variables('serviceBusName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('monitor-',variables('cmsTopicName-draft'))]",
+            "type": "Microsoft.Resources/deployments",
+            "condition" : "[not(variables('productionEnvironment'))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'ServiceBus/servicebus-topic-authrule.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "authorizationRuleName": {
+                        "value": "[concat('monitor-',variables('cmsTopicName-draft'))]"
+                    },
+                    "topicName": {
+                        "value": "[variables('cmsTopicName-draft')]"
                     },
                     "rights": {
                         "value": [
