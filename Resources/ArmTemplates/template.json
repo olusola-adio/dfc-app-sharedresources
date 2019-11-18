@@ -254,7 +254,10 @@
             "apiVersion": "2017-05-10",
             "name": "[concat('monitor-',variables('cmsTopicName'))]",
             "type": "Microsoft.Resources/deployments",
-            "condition" : "[not(variables('productionEnvironment'))]",
+            "condition": "[not(variables('productionEnvironment'))]",
+            "dependsOn": [
+                "[variables('cmsTopicName')]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -285,7 +288,10 @@
             "apiVersion": "2017-05-10",
             "name": "[concat('monitor-',variables('cmsTopicName-draft'))]",
             "type": "Microsoft.Resources/deployments",
-            "condition" : "[not(variables('productionEnvironment'))]",
+            "condition": "[not(variables('productionEnvironment'))]",
+            "dependsOn": [
+                "[variables('cmsTopicName-draft')]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
