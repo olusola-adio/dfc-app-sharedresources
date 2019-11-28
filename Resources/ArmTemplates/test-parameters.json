@@ -2,6 +2,12 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "apimResourceGroup": {
+            "value": "dfc-test-template-rg"
+        },
+        "apimServiceName": {
+            "value": "dfc-foo-shared-apim"
+        },
         "aspInstances": {
             "value": 2
         },

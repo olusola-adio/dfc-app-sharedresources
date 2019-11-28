@@ -2,6 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "apimResourceGroup": {
+            "type": "string"
+        },
+        "apimServiceName": {
+            "type": "string"
+        },
         "aseHostingEnvironmentName": {
             "type": "string",
             "defaultValue": ""
@@ -54,7 +60,8 @@
         "servicebusSku": "[if(variables('productionEnvironment'), 'Premium', 'Standard')]",
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
         "cmsTopicName": "cms-messages",
-        "cmsTopicName-draft": "[concat(variables('cmsTopicName'),'-draft')]"
+        "cmsTopicName-draft": "[concat(variables('cmsTopicName'),'-draft')]",
+        "apimJobProfilesProductDisplayName": "Job Profiles"
     },
     "resources": [
         {
@@ -330,6 +337,51 @@
                     },
                     "servicebusName": {
                         "value": "[variables('serviceBusName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "jobprofiles-apim-logger",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('apimResourceGroup')]",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'APIM/apim-logger.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimServiceName": {
+                        "value": "[parameters('apimServiceName')]"
+                    },
+                    "productDisplayName": {
+                        "value": "[variables('apimJobProfilesProductDisplayName')]"
+                    }
+                }
+            }
+        },        
+        {
+            "name": "jobprofiles-apim-product",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('apimResourceGroup')]",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'APIM/apim-product.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "allowAnonymousAccess": {
+                        "value": false
+                    },
+                    "apimServiceName": {
+                        "value": "[parameters('apimServiceName')]"
+                    },
+                    "productDisplayName": {
+                        "value": "[variables('apimJobProfilesProductDisplayName')]"
                     }
                 }
             }
