@@ -9,7 +9,7 @@
             "value": "__AseOutboundIpAddress__"
         },
         "aseResourceGroup": {
-            "value": "__sharedResourceGroup__"
+            "value": "__aseResourceGroup__"
         },
         "aspInstances": {
             "value": __AspInstances__
@@ -31,6 +31,9 @@
         },
         "jobprofileDatabaseOfferThroughput": {
             "value": __JobprofileDatabaseOfferThroughput__
+        },
+        "serviceBusFirewallIpAddresses": {
+            "value": __serviceBusFirewallIpAddresses__
         }
     }
 }

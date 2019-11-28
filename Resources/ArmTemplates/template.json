@@ -34,12 +34,20 @@
         },
         "jobprofileDatabaseOfferThroughput": {
             "type": "int"
+        },
+        "serviceBusFirewallIpAddresses": {
+            "type": "array",
+            "metadata": {
+                "description": "An array of IP addresses that will be added to the list of ServiceBus IP filters.  These are in addition to the defaults and aseOutboundIpAddress."
+            },
+            "defaultValue": []
         }
     },
     "variables": {
-        "productionEnvironment": "[or(equals(parameters('environment'), 'PP'), equals(parameters('Environment'), 'PRD'))]",
+        "productionEnvironment": "[contains(createArray('OAT', 'PP', 'PRD'), parameters('Environment'))]",
         "appServicePlanName": "[concat(variables('ResourcePrefix'), '-asp')]",
         "allowedIpAddresses": "[createArray('104.42.195.92','40.76.54.131','52.176.6.30','52.169.50.45','52.187.184.26', parameters('aseOutboundIpAddress'))]",
+        "serviceBusAllowedIpAddresses": "[concat(variables('allowedIpAddresses'), parameters('serviceBusFirewallIpAddresses'))]",
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-sharedresources'))]",
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
@@ -178,7 +186,7 @@
                         "value": "Accept"
                     },
                     "ipAddress": {
-                        "value": "[variables('allowedIpAddresses')[copyIndex()]]"
+                        "value": "[variables('serviceBusAllowedIpAddresses')[copyIndex()]]"
                     },
                     "servicebusName": {
                         "value": "[variables('servicebusName')]"
@@ -190,7 +198,7 @@
             ],
              "copy": {
                  "name": "ipFilterRuleCopy",
-                 "count": "[length(variables('allowedIpAddresses'))]"
+                 "count": "[length(variables('serviceBusAllowedIpAddresses'))]"
              }
         },
         {
@@ -214,6 +222,9 @@
             "apiVersion": "2017-05-10",
             "name": "[variables('cmsTopicName')]",
             "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "appSharedServiceBus"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -234,6 +245,9 @@
             "apiVersion": "2017-05-10",
             "name": "[variables('cmsTopicName-draft')]",
             "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "appSharedServiceBus"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -256,6 +270,7 @@
             "type": "Microsoft.Resources/deployments",
             "condition": "[not(variables('productionEnvironment'))]",
             "dependsOn": [
+                "appSharedServiceBus",
                 "[variables('cmsTopicName')]"
             ],
             "properties": {
@@ -290,6 +305,7 @@
             "type": "Microsoft.Resources/deployments",
             "condition": "[not(variables('productionEnvironment'))]",
             "dependsOn": [
+                "appSharedServiceBus",
                 "[variables('cmsTopicName-draft')]"
             ],
             "properties": {

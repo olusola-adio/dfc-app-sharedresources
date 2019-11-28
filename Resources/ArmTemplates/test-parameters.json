@@ -22,6 +22,9 @@
         },
         "jobprofileDatabaseOfferThroughput": {
             "value": 400
+        },
+        "serviceBusFirewallIpAddresses": {
+            "value": []
         }
     }
 }
