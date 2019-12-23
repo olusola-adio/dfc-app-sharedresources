@@ -61,7 +61,8 @@
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
         "cmsTopicName": "cms-messages",
         "cmsTopicName-draft": "[concat(variables('cmsTopicName'),'-draft')]",
-        "apimJobProfilesProductDisplayName": "Job Profiles"
+        "apimJobProfilesProductDisplayName": "Job Profiles",
+        "addDevelopersGroupToJPProduct": "[equals(tolower(parameters('environment')), 'oat')]"
     },
     "resources": [
         {
@@ -358,6 +359,12 @@
                     },
                     "productDisplayName": {
                         "value": "[variables('apimJobProfilesProductDisplayName')]"
+                    },
+                    "productDescription": {
+                        "value": "By clicking confirm, you are agreeing to the conditions in the Code Of Connection"
+                    },
+                    "productTerms": {
+                        "value": "By subscribing to this API, you are agreeing to the conditions in the Code Of Connection"
                     }
                 }
             }
@@ -376,6 +383,9 @@
                 "parameters": {
                     "allowAnonymousAccess": {
                         "value": false
+                    },
+                    "addDevelopers": {
+                        "value": "[variables('addDevelopersGroupToJPProduct')]"
                     },
                     "apimServiceName": {
                         "value": "[parameters('apimServiceName')]"
