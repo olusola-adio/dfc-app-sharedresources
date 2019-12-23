@@ -359,12 +359,6 @@
                     },
                     "productDisplayName": {
                         "value": "[variables('apimJobProfilesProductDisplayName')]"
-                    },
-                    "productDescription": {
-                        "value": "By clicking confirm, you are agreeing to the conditions in the Code Of Connection"
-                    },
-                    "productTerms": {
-                        "value": "By subscribing to this API, you are agreeing to the conditions in the Code Of Connection"
                     }
                 }
             }
@@ -392,7 +386,13 @@
                     },
                     "productDisplayName": {
                         "value": "[variables('apimJobProfilesProductDisplayName')]"
-                    }
+                    },
+                    "productDescription": {
+                        "value": "By clicking confirm, you are agreeing to the conditions in the Code Of Connection"
+                    },
+                    "productTerms": {
+                        "value": "By subscribing to this API, you are agreeing to the conditions in the Code Of Connection"                    }
+
                 }
             }
         }
