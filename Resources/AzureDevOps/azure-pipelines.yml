@@ -1,7 +1,7 @@
 variables:
     ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates' 
     ApimPolicyRoot: '$(Build.SourcesDirectory)\Resources\ApimPolicies'
-    PSScriptsRoot: '$(Build.SourcesDirectory)\Resources\PSScriptsRoot'
+    PSScriptsRoot: '$(Build.SourcesDirectory)\Resources\PSScripts'
     HtmlContent: '$(Build.SourcesDirectory)\Resources\HtmlContent'
 
 resources:
