@@ -1,6 +1,8 @@
 variables:
     ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates' 
     ApimPolicyRoot: '$(Build.SourcesDirectory)\Resources\ApimPolicies'
+    PSScriptsRoot: '$(Build.SourcesDirectory)\Resources\PSScriptsRoot'
+    HtmlContent: '$(Build.SourcesDirectory)\Resources\HtmlContent'
 
 resources:
   repositories:
@@ -31,6 +33,18 @@ jobs:
     inputs:
       SourceFolder: $(ApimPolicyRoot)
       TargetFolder: $(build.artifactstagingdirectory)/Azure/ApimPolicies
+
+  - task: CopyFiles@2
+    displayName: 'Copy scripts to staging'
+    inputs:
+      SourceFolder: $(PSScriptsRoot)
+      TargetFolder: $(build.artifactstagingdirectory)/PSScripts
+
+  - task: CopyFiles@2
+    displayName: 'Copy content files to staging'
+    inputs:
+      SourceFolder: $(HtmlContent)
+      TargetFolder: $(build.artifactstagingdirectory)/Content
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Artifact
