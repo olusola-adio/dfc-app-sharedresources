@@ -44,7 +44,7 @@ jobs:
     displayName: 'Copy content files to staging'
     inputs:
       SourceFolder: $(HtmlContent)
-      TargetFolder: $(build.artifactstagingdirectory)/Content
+      TargetFolder: $(build.artifactstagingdirectory)/HtmlContent
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Artifact
