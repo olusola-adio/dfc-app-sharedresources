@@ -62,7 +62,7 @@
         "cmsTopicName": "cms-messages",
         "cmsTopicName-draft": "[concat(variables('cmsTopicName'),'-draft')]",
         "apimJobProfilesProductDisplayName": "Job Profiles",
-        "addDevelopersGroupToJPProduct": "[equals(tolower(parameters('environment')), 'oat')]"
+        "addDevelopersGroupToJPProduct": "[contains(createArray('oat', 'prd'), tolower(parameters('environment')))]"
     },
     "resources": [
         {
