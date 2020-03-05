@@ -40,6 +40,24 @@
         },
         "serviceBusFirewallIpAddresses": {
             "value": __serviceBusFirewallIpAddresses__
+        },
+        "slackWebHookToken": {
+            "value": "__slackWebhookToken__"
+        },
+        "slackChannelForAlerts": {
+            "value": "__slackChannelForAlerts__"
+        },
+        "emailAddressForAlerts": {
+            "value": "__emailAddressForAlerts__"
+        },
+        "enableAlerts": {
+            "value": __EnableAzureMonitorAlerting__
+        },
+        "activeMessagesAlertThreshold": {
+            "value": __ActiveMessageAlertThreshold__
+        },
+        "deadLetterMessagesAlertThreshold": {
+            "value": __DeadLetterMessageAlertThreshold__
         }
     }
 }
