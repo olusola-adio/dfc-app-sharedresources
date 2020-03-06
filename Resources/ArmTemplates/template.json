@@ -74,15 +74,15 @@
             }
         },
         "activeMessagesAlertThreshold": {
-            "type": "int",
-            "defaultValue": 1000,
+            "type": "string",
+            "defaultValue": "1000",
             "metadata": {
                 "description": "The threshold of active messages in a topic that causes alerts to fire"
             }
         },
         "deadLetterMessagesAlertThreshold": {
-            "type": "int",
-            "defaultValue": 1000,
+            "type": "string",
+            "defaultValue": "1000",
             "metadata": {
                 "description": "The threshold of active messages in a topic that causes alerts to fire"
             }

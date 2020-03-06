@@ -54,10 +54,10 @@
             "value": __EnableAzureMonitorAlerting__
         },
         "activeMessagesAlertThreshold": {
-            "value": __ActiveMessageAlertThreshold__
+            "value": "__ActiveMessageAlertThreshold__"
         },
         "deadLetterMessagesAlertThreshold": {
-            "value": __DeadLetterMessageAlertThreshold__
+            "value": "__DeadLetterMessageAlertThreshold__"
         }
     }
 }
