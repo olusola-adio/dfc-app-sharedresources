@@ -4,7 +4,6 @@
     <rate-limit calls="__RateLimitRequests__" renewal-period="__RateLimitRenewalPeriod__" />
   </inbound>
   <backend>
-    <base />
     <retry condition="@(context.Response.StatusCode == 503)" count="15" interval="1">
       <forward-request />
     </retry>
