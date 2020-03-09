@@ -98,15 +98,38 @@
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
         "servicebusSku": "[if(variables('productionEnvironment'), 'Premium', 'Standard')]",
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
-        "cmsTopicName": "cms-messages",
-        "cmsTopicName-draft": "[concat(variables('cmsTopicName'),'-draft')]",
         "apimJobProfilesProductDisplayName": "Job Profiles",
         "addDevelopersGroupToJPProduct": "[equals(tolower(parameters('environment')), 'oat')]",
         "MonitoringAppServicePlanName": "[concat(variables('ResourcePrefix'), '-mon-asp')]",
         "MonitoringAppInsightsName": "[concat(variables('ResourcePrefix'), '-mon-ai')]",
         "MonitoringFunctionAppName": "[concat(variables('ResourcePrefix'), '-mon-fa')]",
-        "ActionGroupName": "[concat(variables('ResourcePrefix'), '-actgrp')]"
+        "ActionGroupName": "[concat(variables('ResourcePrefix'), '-actgrp')]",
+        "TopicsToCreate": [
+            "cms-messages",
+            "cms-messages-draft",
+            "job-profile-refresh",
+            "job-profile-refresh-draft"
+        ]
     },
+    "functions": [
+        {
+            "namespace": "dfc",
+            "members": {
+                "truncateDeploymentName": {
+                    "parameters": [
+                        {
+                            "name": "deploymentName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[skip(parameters('deploymentName'), sub(length(parameters('deploymentName')),64))]"
+                    }
+                }
+            }
+        }
+    ],
     "resources": [
         {
             "apiVersion": "2017-05-10",
@@ -271,7 +294,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[variables('cmsTopicName')]",
+            "name": "[variables('TopicsToCreate')[copyIndex()]]",
             "type": "Microsoft.Resources/deployments",
             "dependsOn": [
                 "appSharedServiceBus"
@@ -287,42 +310,23 @@
                         "value": "[variables('serviceBusName')]"
                     },
                     "serviceBusTopicName": {
-                        "value": "[variables('cmsTopicName')]"
+                        "value": "[variables('TopicsToCreate')[copyIndex()]]"
                     }
                 }
+            },
+            "copy": {
+                "name": "topicCopy",
+                "count": "[length(variables('TopicsToCreate'))]"
             }
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[variables('cmsTopicName-draft')]",
-            "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "appSharedServiceBus"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'ServiceBus/servicebus-topic.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "serviceBusNamespaceName": {
-                        "value": "[variables('serviceBusName')]"
-                    },
-                    "serviceBusTopicName": {
-                        "value": "[variables('cmsTopicName-draft')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[concat('monitor-',variables('cmsTopicName'))]",
+            "name": "[concat('monitor-', variables('TopicsToCreate')[copyIndex()])]",
             "type": "Microsoft.Resources/deployments",
             "condition": "[not(variables('productionEnvironment'))]",
             "dependsOn": [
                 "appSharedServiceBus",
-                "[variables('cmsTopicName')]"
+                "topicCopy"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -332,10 +336,10 @@
                 },
                 "parameters": {
                     "authorizationRuleName": {
-                        "value": "[concat('monitor-',variables('cmsTopicName'))]"
+                        "value": "[concat('monitor-', variables('TopicsToCreate')[copyIndex()])]"
                     },
                     "topicName": {
-                        "value": "[variables('cmsTopicName')]"
+                        "value": "[variables('TopicsToCreate')[copyIndex()]]"
                     },
                     "rights": {
                         "value": [
@@ -348,41 +352,10 @@
                         "value": "[variables('serviceBusName')]"
                     }
                 }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[concat('monitor-',variables('cmsTopicName-draft'))]",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[not(variables('productionEnvironment'))]",
-            "dependsOn": [
-                "appSharedServiceBus",
-                "[variables('cmsTopicName-draft')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'ServiceBus/servicebus-topic-authrule.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "authorizationRuleName": {
-                        "value": "[concat('monitor-',variables('cmsTopicName-draft'))]"
-                    },
-                    "topicName": {
-                        "value": "[variables('cmsTopicName-draft')]"
-                    },
-                    "rights": {
-                        "value": [
-                            "manage",
-                            "send",
-                            "listen"
-                        ]
-                    },
-                    "servicebusName": {
-                        "value": "[variables('serviceBusName')]"
-                    }
-                }
+            },
+            "copy": {
+                "name": "topicAuthRuleCopy",
+                "count": "[length(variables('TopicsToCreate'))]"
             }
         },
         {
@@ -405,7 +378,7 @@
                     }
                 }
             }
-        },        
+        },
         {
             "name": "jobprofiles-apim-product",
             "type": "Microsoft.Resources/deployments",
@@ -434,8 +407,8 @@
                         "value": "By clicking confirm, you are agreeing to the conditions in the Code Of Connection"
                     },
                     "productTerms": {
-                        "value": "By subscribing to this API, you are agreeing to the conditions in the Code Of Connection"                    }
-
+                        "value": "By subscribing to this API, you are agreeing to the conditions in the Code Of Connection" 
+                    }
                 }
             }
         },
@@ -708,7 +681,7 @@
         },
         {
             "apiVersion": "2019-05-01",
-            "name": "[concat(variables('servicebusName'), '-', variables('cmsTopicName'),'-active-msgs')]",
+            "name": "[dfc.truncateDeploymentName(concat(variables('servicebusName'), '-', variables('TopicsToCreate')[copyIndex()],'-active-msgs'))]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -721,7 +694,7 @@
                         "value": "[parameters('enableAlerts')]"
                     },
                     "alertName": {
-                        "value": "[concat(variables('servicebusName'), '-', variables('cmsTopicName'),'-active-msgs')]"
+                        "value": "[concat(variables('servicebusName'), '-', variables('TopicsToCreate')[copyIndex()],'-active-msgs')]"
                     },
                     "alertSeverity": {
                         "value": 3
@@ -740,7 +713,7 @@
                             {
                                 "name": "EntityName",
                                 "operator": "Include",
-                                "values": [ "[variables('cmsTopicName')]" ]
+                                "values": [ "[variables('TopicsToCreate')[copyIndex()]]" ]
                             }
                         ]
                     },
@@ -763,12 +736,16 @@
             },
             "dependsOn": [
                 "[variables('ActionGroupName')]",
-                "[variables('cmsTopicName')]"
-            ]
+                "topicCopy"
+            ],
+            "copy": {
+                "name": "activeMessageAklertCopy",
+                "count": "[length(variables('TopicsToCreate'))]"
+            }
         },
         {
             "apiVersion": "2019-05-01",
-            "name": "[concat(variables('servicebusName'), '-', variables('cmsTopicName-draft'),'-active-msgs')]",
+            "name": "[dfc.truncateDeploymentName(concat(variables('servicebusName'), '-', variables('TopicsToCreate')[copyIndex()],'-dlq-msgs'))]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -781,68 +758,7 @@
                         "value": "[parameters('enableAlerts')]"
                     },
                     "alertName": {
-                        "value": "[concat(variables('servicebusName'), '-', variables('cmsTopicName-draft'),'-active-msgs')]"
-                    },
-                    "alertSeverity": {
-                        "value": 3
-                    },
-                    "metricName": {
-                        "value": "ActiveMessages"
-                    },
-                    "operator": {
-                        "value": "GreaterThan"
-                    },
-                    "threshold": {
-                        "value": "[parameters('activeMessagesAlertThreshold')]"
-                    },
-                    "dimensions": {
-                        "value": [
-                            {
-                                "name": "EntityName",
-                                "operator": "Include",
-                                "values": [ "[variables('cmsTopicName-draft')]" ]
-                            }
-                        ]
-                    },
-                    "aggregation": {
-                        "value": "Average"
-                    },
-                    "windowSize": {
-                        "value": "PT5M"
-                    },
-                    "evaluationFrequency": {
-                        "value": "PT1M"
-                    },
-                    "actionGroupName": {
-                        "value": "[variables('ActionGroupName')]"
-                    },
-                    "resourceId": {
-                        "value": "[resourceId('Microsoft.ServiceBus/namespaces', variables('servicebusName'))]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('ActionGroupName')]",
-                "[variables('cmsTopicName-draft')]"
-            ]
-        },
-
-        {
-            "apiVersion": "2019-05-01",
-            "name": "[concat(variables('servicebusName'), '-', variables('cmsTopicName'),'-dlq-msgs')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'Application-Insights/metric-alerts.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "enabled": {
-                        "value": "[parameters('enableAlerts')]"
-                    },
-                    "alertName": {
-                        "value": "[concat(variables('servicebusName'), '-', variables('cmsTopicName'),'-dlq-msgs')]"
+                        "value": "[concat(variables('servicebusName'), '-', variables('TopicsToCreate')[copyIndex()],'-dlq-msgs')]"
                     },
                     "alertSeverity": {
                         "value": 3
@@ -861,7 +777,7 @@
                             {
                                 "name": "EntityName",
                                 "operator": "Include",
-                                "values": [ "[variables('cmsTopicName')]" ]
+                                "values": [ "[variables('TopicsToCreate')[copyIndex()]]" ]
                             }
                         ]
                     },
@@ -884,68 +800,12 @@
             },
             "dependsOn": [
                 "[variables('ActionGroupName')]",
-                "[variables('cmsTopicName')]"
-            ]
-        },
-        {
-            "apiVersion": "2019-05-01",
-            "name": "[concat(variables('servicebusName'), '-', variables('cmsTopicName-draft'),'-dlq-msgs')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'Application-Insights/metric-alerts.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "enabled": {
-                        "value": "[parameters('enableAlerts')]"
-                    },
-                    "alertName": {
-                        "value": "[concat(variables('servicebusName'), '-', variables('cmsTopicName-draft'),'-dlq-msgs')]"
-                    },
-                    "alertSeverity": {
-                        "value": 3
-                    },
-                    "metricName": {
-                        "value": "DeadletteredMessages"
-                    },
-                    "operator": {
-                        "value": "GreaterThan"
-                    },
-                    "threshold": {
-                        "value": "[parameters('deadLetterMessagesAlertThreshold')]"
-                    },
-                    "dimensions": {
-                        "value": [
-                            {
-                                "name": "EntityName",
-                                "operator": "Include",
-                                "values": [ "[variables('cmsTopicName-draft')]" ]
-                            }
-                        ]
-                    },
-                    "aggregation": {
-                        "value": "Average"
-                    },
-                    "windowSize": {
-                        "value": "PT5M"
-                    },
-                    "evaluationFrequency": {
-                        "value": "PT1M"
-                    },
-                    "actionGroupName": {
-                        "value": "[variables('ActionGroupName')]"
-                    },
-                    "resourceId": {
-                        "value": "[resourceId('Microsoft.ServiceBus/namespaces', variables('servicebusName'))]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('ActionGroupName')]",
-                "[variables('cmsTopicName-draft')]"
-            ]
+                "topicCopy"
+            ],
+            "copy": {
+                "name": "DeadLetterAlertCopy",
+                "count": "[length(variables('TopicsToCreate'))]"
+            }
         }
     ]
 }
