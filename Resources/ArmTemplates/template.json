@@ -99,7 +99,8 @@
         "servicebusSku": "[if(variables('productionEnvironment'), 'Premium', 'Standard')]",
         "storageAccountName": "[tolower(concat('dfc', parameters('environment'), 'appsharedstr'))]",
         "apimJobProfilesProductDisplayName": "Job Profiles",
-        "addDevelopersGroupToJPProduct": "[equals(tolower(parameters('environment')), 'oat')]",
+        "apimDysacProductDisplayName": "Discover Skills and Careers",
+        "addDevelopersGroupToProduct": "[equals(tolower(parameters('environment')), 'oat')]",
         "MonitoringAppServicePlanName": "[concat(variables('ResourcePrefix'), '-mon-asp')]",
         "MonitoringAppInsightsName": "[concat(variables('ResourcePrefix'), '-mon-ai')]",
         "MonitoringFunctionAppName": "[concat(variables('ResourcePrefix'), '-mon-fa')]",
@@ -395,7 +396,7 @@
                         "value": false
                     },
                     "addDevelopers": {
-                        "value": "[variables('addDevelopersGroupToJPProduct')]"
+                        "value": "[variables('addDevelopersGroupToProduct')]"
                     },
                     "apimServiceName": {
                         "value": "[parameters('apimServiceName')]"
@@ -408,6 +409,54 @@
                     },
                     "productTerms": {
                         "value": "By subscribing to this API, you are agreeing to the conditions in the Code Of Connection" 
+                    }
+                }
+            }
+        },
+        {
+            "name": "dysac-apim-logger",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('apimResourceGroup')]",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'APIM/apim-logger.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apimServiceName": {
+                        "value": "[parameters('apimServiceName')]"
+                    },
+                    "productDisplayName": {
+                        "value": "[variables('apimDysacProductDisplayName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "dysac-apim-product",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('apimResourceGroup')]",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'), 'APIM/apim-product.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "allowAnonymousAccess": {
+                        "value": false
+                    },
+                    "addDevelopers": {
+                        "value": "[variables('addDevelopersGroupToProduct')]"
+                    },
+                    "apimServiceName": {
+                        "value": "[parameters('apimServiceName')]"
+                    },
+                    "productDisplayName": {
+                        "value": "[variables('apimDysacProductDisplayName')]"
                     }
                 }
             }
