@@ -499,6 +499,7 @@
                 "[variables('MonitoringAppInsightsName')]"
             ],
             "properties": {
+                "httpsOnly": true,
                 "siteConfig": {
                     "appSettings": [
                         {
