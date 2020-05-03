@@ -93,7 +93,7 @@
         "appServicePlanName": "[concat(variables('ResourcePrefix'), '-asp')]",
         "allowedIpAddresses": "[createArray('104.42.195.92','40.76.54.131','52.176.6.30','52.169.50.45','52.187.184.26', parameters('aseOutboundIpAddress'))]",
         "serviceBusAllowedIpAddresses": "[concat(variables('allowedIpAddresses'), parameters('serviceBusFirewallIpAddresses'))]",
-        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+        "deploymentUrlBase": "https://raw.githubusercontent.com/olusola-adio/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('environment'), '-app-sharedresources'))]",
         "servicebusName": "[concat(variables('ResourcePrefix'), '-ns')]",
         "servicebusSku": "[if(variables('productionEnvironment'), 'Premium', 'Standard')]",
