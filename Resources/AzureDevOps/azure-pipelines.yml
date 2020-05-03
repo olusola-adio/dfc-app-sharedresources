@@ -9,14 +9,14 @@ resources:
     type: github
     name: olusola-adio/dfc-devops
     ref: refs/tags/v1.3.0
-    endpoint: 'GitHub (ESFA)'
+    endpoint: 'olusola-adio'
 
 jobs:
 
 - job: BuildAndTestArmTemplate
   displayName: BuildAndTestArmTemplate
   pool:
-    name: NCS - CI and CD
+    name: windows-latest
     demands:
     - msbuild
     - visualstudio
