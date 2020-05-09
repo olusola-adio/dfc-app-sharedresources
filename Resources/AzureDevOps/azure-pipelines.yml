@@ -16,7 +16,7 @@ jobs:
 - job: BuildAndTestArmTemplate
   displayName: BuildAndTestArmTemplate
   pool:
-    name: vs2017-win2016
+    vmImage: vs2017-win2016
     demands:
     - msbuild
     - visualstudio
