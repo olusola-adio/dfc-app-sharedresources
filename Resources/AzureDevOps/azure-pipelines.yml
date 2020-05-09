@@ -8,7 +8,6 @@ resources:
   - repository: dfc-devops
     type: github
     name: olusola-adio/dfc-devops
-    ref: refs/tags/v1.3.0
     endpoint: 'olusola-adio'
 
 jobs:
