@@ -17,9 +17,6 @@ jobs:
   displayName: BuildAndTestArmTemplate
   pool:
     vmImage: vs2017-win2016
-    demands:
-    - msbuild
-    - visualstudio
 
   steps:
   - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
