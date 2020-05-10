@@ -19,7 +19,7 @@ jobs:
     vmImage: vs2017-win2016
 
   steps:
-  - template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+  - template: AzureDevOpsTemplates/Build/StepTemplates/dfc-arm-build.yml@dfc-devops
     parameters:
       ArmTemplateRoot: $(ArmTemplateRoot)
 
