@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "apimResourceGroup": {
-            "value": "dfc-test-template-rg"
+            "value": "olu-test-template-rg"
         },
         "apimServiceName": {
-            "value": "dfc-foo-shared-apim"
+            "value": "olu-foo-shared-apim"
         },
         "aspInstances": {
             "value": 2
@@ -18,7 +18,7 @@
             "value": "Standard"
         },
         "cosmosDbName": {
-            "value": "dfc-dev-app-sharedresources-cdb"
+            "value": "olu-dev-app-sharedresources-cdb"
         },
         "environment": {
             "value": "FOO"
