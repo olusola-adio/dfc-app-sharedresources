@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "apimResourceGroup": {
-            "value": "olu-test-template-rg"
+            "value": "dwp-test-template-rg"
         },
         "apimServiceName": {
-            "value": "olu-foo-shared-apim"
+            "value": "dwp-foo-shared-apim"
         },
         "aspInstances": {
             "value": 2
@@ -18,7 +18,7 @@
             "value": "Standard"
         },
         "cosmosDbName": {
-            "value": "olu-dev-app-sharedresources-cdb"
+            "value": "dwp-dev-app-sharedresources-cdb"
         },
         "environment": {
             "value": "FOO"
